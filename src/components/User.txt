@@ -1,0 +1,54 @@
+User 
+    Pradeep 
+    admin
+    sada
+
+roles 
+    Admin 
+    custoner 
+    sub customer 
+    user 
+    sub user 
+
+operations 
+
+    addUser 
+    deleteduser 
+    edituser 
+    viewUser 
+
+    add IFC
+    view IFC
+    edit IFC
+    delete IFC 
+
+
+Permission 
+
+Admin 
+
+    addCustomer         Y
+    deletCustomer         Y   
+    editCustomer            Y
+    viewCustomer            Y
+
+    add IFC             Y
+    view IFC            Y
+    edit IFC            Y
+    delete IFC          Y
+
+
+
+Customer 
+
+    addCustomer         N
+    deletCustomer       N   
+    editCustomer        N    
+    viewCustomer        N    
+
+    add IFC             Y
+    view IFC            Y
+    edit IFC            Y
+    delete IFC          Y
+
+
