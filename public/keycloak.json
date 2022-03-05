@@ -1,10 +1,8 @@
 {
-    "realm": "washroom",
-    "auth-server-url": "http://localhost:8080/auth/",
-    "ssl-required": "none",
-    "resource": "test-client",
-    "public-client": true,
-    "verify-token-audience": true,
-    "use-resource-role-mappings": true,
-    "confidential-port": 0
-  }
+  "realm": "washroom",
+  "auth-server-url": "http://ec2-18-192-107-104.eu-central-1.compute.amazonaws.com:8080/auth/",
+  "ssl-required": "none",
+  "resource": "admin-dash",
+  "public-client": true,
+  "confidential-port": 0
+}

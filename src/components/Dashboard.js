@@ -1,431 +1,375 @@
-import React, { useEffect, useState, useContext, useCallback } from 'react'
-import { Form, FormGroup, Label, Input, FormText, Button, Table, Dropdown, DropdownItem, DropdownMenu, DropdownToggle } from 'reactstrap'
-import 'bootstrap/dist/css/bootstrap.min.css';
-import "./dashboard.css"
-import moment from 'moment';
-import { useNavigate } from "react-router-dom"
-import keycloakApi from '../apiCall';
-import ReactPaginate from 'react-paginate'
-import ModelComponent from './Model';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { AuthContext } from '../App';
-import axios from 'axios';
+import axios from "axios";
+import "bootstrap/dist/css/bootstrap.min.css";
+import moment from "moment";
+import React, { useCallback, useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import {
+    Button, Dropdown, DropdownItem, DropdownMenu, DropdownToggle, UncontrolledDropdown
+} from "reactstrap";
+import home from "../../src/assests/blackhome.png";
+import logoImg from "../../src/assests/helixSenseLogo.svg";
+import logout from "../../src/assests/logout.png";
+import plus from "../../src/assests/plus.png";
+import role from "../../src/assests/role.png";
+import userimg from "../../src/assests/user.png";
+import keycloakApi, { HELIX_SERVER_URL } from "../apiCall";
+import { AuthContext } from "../App";
+import "./dashboard.css";
+import ModelComponent from "./Model";
+
+
 
 
 
 
 const Dashboard = () => {
     const keycloak = useContext(AuthContext);
-    console.log("---use context vaklue-----", keycloak);
-
-    const breadcrum = ["Users", "Roles/Permessions"]
-    const [active, setActive] = useState(0)
-    const [customerList, setCustomerList] = useState([])
-    const [skip, setSkip] = useState(0)
-    const [recordCount, setRecordCount] = useState(0)
+    console.log("-----kc----",keycloak);
+    const breadcrum = ["Users", "Roles/Permessions"];
+    const [active, setActive] = useState(0);
+    const [customerList, setCustomerList] = useState([]);
+    const [skip, setSkip] = useState(0);
+    const [recordCount, setRecordCount] = useState(0);
     const [pageCount, setPageCount] = useState(0);
-    const navigate = useNavigate()
-    const [showModel, setShowModel] = useState(false)
-    const [selectedRecord, setSelectedRecord] = useState(null)
-    const [loginUserRole, setLoginUserRole] = useState("")
-    const [showAction, setShowAction] = useState(null)
-    const [isTabOpen, setIsTabOpen] = useState(false)
+    const navigate = useNavigate();
+    const [showModel, setShowModel] = useState(false);
+    const [selectedRecord, setSelectedRecord] = useState(null);
+    const [loginUserRole, setLoginUserRole] = useState("");
+    const [showAction, setShowAction] = useState(null);
+    const [isTabOpen, setIsTabOpen] = useState(false);
+
+    // useEffect( () => {
+
+        
 
 
 
+    //     if (keycloak?.authenticated === true) {
+    //         if (keycloak.hasRealmRole("Create Customer")) {
+    //             setLoginUserRole("Admin");
+    //         }
 
+    //         if (keycloak.hasRealmRole("Create Sub Customer")) {
+    //             setLoginUserRole("Customer");
+    //         }
 
-
-
-    useEffect(() => {
-        if (keycloak?.authenticated === true) {
-            console.log("------adadadad----", keycloak?.hasRealmRole("Create Sub Customer"));
-            if (keycloak.hasRealmRole("Create Customer")) {
-                setLoginUserRole("Admin")
-            }
-
-            if (keycloak.hasRealmRole("Create Sub Customer")) {
-                setLoginUserRole("Customer")
-            }
-
-            if (keycloak.hasRealmRole("Create User")) {
-                setLoginUserRole("Sub Customer")
-            }
-            if (keycloak.hasRealmRole("Create Sub User")) {
-                setLoginUserRole("User")
-            }
-            if (keycloak.hasRealmRole("Download Reports")) {
-                setLoginUserRole("Sub User")
-            }
-
-        }
-
-
-
-    }, [keycloak])
-
+    //         if (keycloak.hasRealmRole("Create User")) {
+    //             setLoginUserRole("Sub Customer");
+    //         }
+    //         if (keycloak.hasRealmRole("Create Sub User")) {
+    //             setLoginUserRole("User");
+    //         }
+    //         if (keycloak.hasRealmRole("Download Reports")) {
+    //             setLoginUserRole("Sub User");
+    //         }
+    //     }
+    // }, [keycloak]);
 
     const addUserToGroup = (user) => {
-
         switch (user) {
             case "Admin":
-                return "Customer(CBRE)"
+                return "Customer";
             case "Customer":
-                return "Sub Customer(MS)"
+                return "Sub Customer";
             case "Sub Customer":
-                return "User"
+                return "User";
             case "User":
-                return "Sub User"
+                return "Sub User";
         }
-
-    }
-
-
-
-
-
-
-
-
+    };
 
     const getAllCustomer = async () => {
 
-        try {
 
+        const resGroup = await keycloakApi.get(`/users/${keycloak?.subject}/groups`)
+        console.log("-------res---------",resGroup.data[0].name);
+    
+        setLoginUserRole(resGroup.data[0].name)
+
+
+
+
+
+        try {
             const accessToken = localStorage.getItem("accessToken");
 
-            const res = await axios.get(`http://localhost:8081/api/im_users/getImUser?id=${keycloak?.subject}`, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${accessToken}`
-                },
+            const res = await axios.get(
+                `${HELIX_SERVER_URL}/im_users/getImUser?id=${keycloak?.subject}`,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                }
+            );
 
+            let sorted_data = res?.data.sort(function (var1, var2) {
+                // console.log("------------",var1,var2);
+                var a = new Date(var1?.createdTimestamp).getTime(), b = new Date(var2?.createdTimestamp).getTime();
+                if (a > b) {
+
+                    return -1;
+                }
+                if (a < b) {
+
+                    return 1;
+                }
+
+                return 0;
             })
+            setCustomerList(sorted_data)
 
-            console.log("-------------res------------------", res);
-            setCustomerList(res?.data)
-
-
-
-
-
-
-
-
-
-            // const res = await keycloakApi.get(`/users`)
-            // console.log("---res data----", res.data)
-            // let sorted_data = res?.data.sort(function (var1, var2) {
-            //     // console.log("------------",var1,var2);
-            //     var a = new Date(var1?.createdTimestamp).getTime(), b = new Date(var2?.createdTimestamp).getTime();
-            //     if (a > b) {
-
-            //         return -1;
-            //     }
-            //     if (a < b) {
-
-            //         return 1;
-            //     }
-
-            //     return 0;
-            // })
-            // setCustomerList(sorted_data)
-            // const sortedActivities = activities.sort((a, b) => b.date - a.date)
-
-
-
-        } catch (error) {
-            // navigate("/login")
-
-        }
-
-    }
+        } catch (error) { }
+    };
 
     useEffect(() => {
         if (keycloak?.authenticated === true) {
-            getAllCustomer()
+            getAllCustomer();
         }
-
-    }, [keycloak])
-
-
+    }, [keycloak]);
 
     const handleActive = (i) => {
-        setActive(i)
-    }
+        setActive(i);
+    };
     const handlePageChange = (selectedObject) => {
-        setSkip(selectedObject.selected * 10)
+        setSkip(selectedObject.selected * 10);
     };
 
     const handleDelete = async () => {
-        console.log("---delete--", selectedRecord)
+
         try {
-            const res = await keycloakApi.delete(`/users/${selectedRecord}`)
-            console.log("---res----", res);
-            setShowModel(false)
-            notify("User deleted sucessfully")
-            getAllCustomer()
+            const res = await keycloakApi.delete(`/users/${selectedRecord}`);
 
+            setShowModel(false);
+            notify("User deleted sucessfully");
+            getAllCustomer();
         } catch (error) {
-            console.log("----error--", error);
-            notifyError("Unauthorized")
-
-
+            notifyError("Unauthorized");
         }
+    };
+    const notifyError = (message) =>
+        toast.error(message, {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            onClose: () => {
+                setShowModel(false);
+            },
+        });
 
-
-    }
-    const notifyError = (message) => toast.error(message, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        onClose: () => { setShowModel(false) }
-    });
-
-    const notify = (message) => toast.success(message, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        onClose: () => { navigate("/") }
-    });
+    const notify = (message) =>
+        toast.success(message, {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            onClose: () => {
+                navigate("/");
+            },
+        });
 
     const handleLogout = useCallback(() => {
-        console.log("---caliinging---");
         // localStorage.clear();
-        keycloak
-            ?.logout()
+        keycloak?.logout();
         //   .then(() =>navigate("/"));
     }, [keycloak]);
 
-
-
-
+    
 
     return (
-        <div className='main_container'>
+        <div>
             <ToastContainer theme="dark" />
-            <ModelComponent showModel={showModel} setShowModel={setShowModel} handleDelete={handleDelete} />
-            <div className='heading_div'>
-                <div >
-                    <h2 className="dashboard"  >User Management</h2>
-                </div>
-                <div className='logout_main'>
-                    <div> <h5 className='username' >Hi, {keycloak?.idTokenParsed?.preferred_username}</h5></div>
-                    <Button
-                        color="info"
-                        onClick={() => handleLogout()}
-                    >
-                        Logout
-                    </Button>
-                </div>
-            </div>
-            {/* <div style={{ height: "60px", width: "60px", position: 'relative' }}>
-                        <img style={{ width: "60px", height: "60px" }} src={require("../assests/logo192.png")} />
-                    </div> */}
-
-            <div className='button_div' >
+            <ModelComponent
+                showModel={showModel}
+                setShowModel={setShowModel}
+                handleDelete={handleDelete}
+            />
+            <div className="heading_div">
                 <div>
-
-                    {breadcrum.map((d, i) => {
-                        return (<span key={i} onClick={() =>{ handleActive(i); if(d==="Roles/Permessions"){
-                            navigate(`/permission`)
-                        }}} className={`span  ${active === i ? "active" : ""}`} >{d}</span>)
-                    })}
-
+                    <img src={logoImg} alt="logo" className="logoimg " />
                 </div>
-                <div style={{ display: "flex" }}>
-                    <div style={{ marginRight: "20px" }}>
-                        <Button
-                            color="success"
-                            onClick={() => { window.open("http://localhost:3010", "_self") }}
-                        >
-                            Helix App
-                        </Button>
+                <div className="logout_main">
+                    <div className="name-logout">
+                        <h6>Hi, {keycloak?.idTokenParsed?.preferred_username}</h6>
+                        <UncontrolledDropdown>
+                            <DropdownToggle className="dropdown-style">
+                                <img src={userimg} alt="logo" className="user " />
+                            </DropdownToggle>
+                            <DropdownMenu >
+                                {/* <DropdownItem header> 
+                <img src={changelogo} alt="logo" className="logo-size " />Change logo</DropdownItem> */}
+                                <DropdownItem style={{ cursor: "pointer" }} header> <div onClick={() => handleLogout()} > <img src={logout} alt="logo" className="logo-size " />Logout</div></DropdownItem>
+
+                            </DropdownMenu>
+                        </UncontrolledDropdown>
+
                     </div>
-                    {loginUserRole !== "Sub User" && (
-                        <Button
-                            color="primary"
-                            onClick={() => navigate("/create-user")}
-                        >
-                            Add {addUserToGroup(loginUserRole)}
-                        </Button>
-                    )}
                 </div>
             </div>
+            <div className="sidebar">
+                <div className="bg-sidebar">
+                    <div className="img-style">
+                        <img src={home} title="User" alt="logo" className="user " />
+                    </div>
+                    {loginUserRole==="Admin"&&(<div className="img-style" onClick={() => { navigate(`/permission`) }}  >
+                        <img src={role} title="Roles/Permessions" alt="logo" className="user " />
+                    </div>)}
+                </div>
+                <div className="main-section">
+                    <div className="button_div">
+                        <div style={{ display: "flex" }}>
+                            <div style={{ marginRight: "20px" }}>
+                                <Button
+                                    color="success"
+                                    onClick={() => {
+                                        window.open("http://ec2-18-192-107-104.eu-central-1.compute.amazonaws.com:3010/", "_blank");
+                                    }}
+                                >
+                                    Helix App
+                                </Button>
+                            </div>
+                            {loginUserRole !== "Sub User" && (
+                                <Button
+                                    color="primary"
+                                    onClick={() => navigate("/create-user")}
+                                    className="bg-btn"
+                                >
+                                    <img src={plus} alt="logo" className="logo-size " /> ADD {addUserToGroup(loginUserRole)}
+                                </Button>
+                            )}
+                        </div>
+                    </div>
 
-
-            {/* ---------------------------table-------------------- */}
-            <div className='table_content' >
-                <h5> All {addUserToGroup(loginUserRole)} List</h5>
-            </div>
-            <Table className='table_style' >
-                <thead style={{ background: "#000", color: "#fff" }}>
-                    <tr>
-                        <th>
-                            SNo.
-                        </th>
-                        <th>
-                            Id
-                        </th>
-                        <th>
-                            User Name
-                        </th>
-                        <th>
-                            Email
-                        </th>
-
-                        <th>
-                            Enabled
-                        </th>
-                        <th>
-                            Created At
-                        </th>
-                        {
-                            loginUserRole !== "Sub User" && (
+                    {/* ---------------------------table-------------------- */}
+                    <div className="table_content">
+                        <h5> All {addUserToGroup(loginUserRole)} List</h5>
+                    </div>
+                    <table className="table table-bordered">
+                        <thead>
+                            <tr className="bg-heading">
                                 <th>
-                                    Actions
+                                    SNo.
                                 </th>
-                            )
-                        }
-                    </tr>
-                </thead>
-                <tbody>
-
-                    {customerList?.map((dta, idx) => {
-                        return (
-
-                            <tr key={idx} >
-
-                                <th scope="row">
-                                    {idx + 1}
+                                <th>
+                                    Id
                                 </th>
-                                <td>
-                                    {dta?.id}
-                                </td>
-                                <td>
-                                    {dta?.username}
-                                </td>
-                                <td>
-                                    {dta?.email}
-                                </td>
+                                <th>
+                                    User Name
+                                </th>
+                                <th>
+                                    Email
+                                </th>
 
-                                <td>
-                                    {dta?.enabled ? "true" : "false"}
-                                </td>
-                                <td>
-                                    {moment(dta?.createdTimestamp).format('L')}
-
-                                </td>
-
-                                {loginUserRole !== "Sub User" && (
-                                    <td>
-                                        {/* <div className='action_div' >
-                                            <div>
-                                                <Button
-                                                    color="success"
-                                                    onClick={() => navigate(`/subcustomer?id=${dta?.id}`)}
-                                                >
-                                                    View
-                                                </Button>
-
-                                            </div>
-                                            <div className='button_mar20' >
-                                                <Button
-                                                    color="danger"
-                                                    onClick={() => {
-                                                        setSelectedRecord(dta?.id)
-                                                        setShowModel(true)
-                                                    }}
-
-                                                >
-                                                    Delete
-                                                </Button>
-
-                                            </div>
-
-                                        </div>  */}
-                                        <div>
-                                            <img className={`arrowDown  ${dta?.id === showAction ? "active_rotate" : ""}`} src={require("../assests/awrrowDown.png")}
-                                                onClick={() => {
-                                                    console.log("---hello--", dta?.id); setIsTabOpen((prev) => !prev); setShowAction(prev => {
-                                                        if (prev !== dta?.id) {
-                                                            return dta?.id
-                                                        }
-                                                        else {
-                                                            return null
-                                                        }
-                                                    })
-                                                }}
-
-
-
-                                            />
-                                            {/* <h6 style={{cursor:"pointer"}} onClick={() => {console.log("---hello--",dta?.id); setIsTabOpen((prev)=>!prev) ;setShowAction(prev=>{
-                                                if(prev!==dta?.id){
-                                                    return dta?.id
-                                                }
-                                                else{
-                                                    return null
-                                                }
-                                            })}}  >click</h6> */}
-
-                                            <div className={`unorder  ${dta?.id === showAction ? "active_tab" : ""}`} >
-                                                <span className='listItem' onClick={() => navigate(`/subcustomer?id=${dta?.id}`)}  >View</span>
-                                                <span className='listItem' onClick={() => {
-                                                    setSelectedRecord(dta?.id)
-                                                    setShowModel(true)
-                                                }}  >Delete</span>
-                                                {/* <span  className='listItem' onClick={()=>navigate(`/permission?id=${dta?.id}`)} >Permessions</span> */}
-
-
-                                            </div>
-
-                                        </div>
-
-                                    </td>
-                                )}
-
-
-
-
-
-
+                                <th>
+                                    Enabled
+                                </th>
+                                <th>
+                                    Created At
+                                </th>
+                                {
+                                    loginUserRole !== "Sub User" && (
+                                        <th>
+                                            Actions
+                                        </th>
+                                    )
+                                }
                             </tr>
-                        )
-                    })}
-                </tbody>
-            </Table>
-            <div className='pagi_div' >
-                {/* <ReactPaginate
-					pageCount={pageCount}
-					pageRange={2}
-					marginPagesDisplayed={2}
-					onPageChange={handlePageChange}
-					containerClassName={'container'}
-					previousLinkClassName={'page'}
-					breakClassName={'page'}
-					nextLinkClassName={'page'}
-					 pageClassName={'page'}
-					disabledClassName={'disabled'}
-					activeClassName={'active_p'}
-                    pageLinkClassName={"list_class"}
-				/> */}
+                        </thead>
+                        <tbody className="table_body">
+
+                            {customerList?.map((dta, idx) => {
+                                return (
+
+                                    <tr key={idx} >
+
+                                        <th scope="row">
+                                            {idx + 1}
+                                        </th>
+                                        <td>
+                                            {dta?.id}
+                                        </td>
+                                        <td>
+                                            {dta?.username}
+                                        </td>
+                                        <td>
+                                            {dta?.email}
+                                        </td>
+
+                                        <td>
+                                            {dta?.enabled ? "true" : "false"}
+                                        </td>
+                                        <td>
+                                            {moment(dta?.createdTimestamp).format('L')}
+
+                                        </td>
+
+                                        {loginUserRole !== "Sub User" && (
+                                            <td>
+
+                                                <div>
+                                                    <img className={`arrowDown  ${dta?.id === showAction ? "active_rotate" : ""}`} src={require("../assests/awrrowDown.png")}
+                                                        onClick={() => {
+                                                            setIsTabOpen((prev) => !prev); setShowAction(prev => {
+                                                                if (prev !== dta?.id) {
+                                                                    return dta?.id
+                                                                }
+                                                                else {
+                                                                    return null
+                                                                }
+                                                            })
+                                                        }}
 
 
 
+                                                    />
+
+
+                                                    <div className={`unorder  ${dta?.id === showAction ? "active_tab" : ""}`} >
+
+
+
+                                                        <Dropdown isOpen={dta?.id === showAction ? true : false}>
+
+                                                            <DropdownMenu>
+
+                                                                <DropdownItem>
+                                                      F              <span className='listItem' onClick={() => navigate(`/subcustomer/${dta?.id}`)}  >View</span>
+                                                                </DropdownItem>
+                                                                <DropdownItem>
+                                                                    <span className='listItem' onClick={() => {
+                                                                        setSelectedRecord(dta?.id)
+                                                                        setShowModel(true)
+                                                                    }}  >Delete</span>
+                                                                </DropdownItem>
+                                                            </DropdownMenu>
+                                                        </Dropdown>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </td>
+                                        )}
+                                    </tr>
+                                )
+                            })}
+
+                        </tbody>
+                    </table>
+                    <div className="pagi_div"></div>
+                </div>
             </div>
         </div>
+    );
+};
 
-    )
-}
-
-export default Dashboard
+export default Dashboard;

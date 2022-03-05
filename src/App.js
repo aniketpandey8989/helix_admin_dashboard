@@ -29,6 +29,8 @@ function App() {
     });
   }, []);
 
+  
+
 
 
 
@@ -43,7 +45,7 @@ function App() {
           <Route path='/create-user' element={<CreateUser />} />
           <Route    path='/permission'  element={<Permissions/>} />
           <Route path='/contextMenu' element={<ContextMenuComponent />} />
-          <Route path='/subcustomer' element={<SubCustomer />} />
+          <Route path='/subcustomer/:id' element={<SubCustomer />} />
         </Routes>
       </AuthContext.Provider>
 
