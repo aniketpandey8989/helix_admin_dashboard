@@ -9,7 +9,6 @@ const Loginpage = () => {
     const navigate = useNavigate()
 
     const onSubmit =  async data => {
-        console.log(data)
         let formObj ={}
         formObj.username=data.username
         formObj.password=data.password
@@ -21,17 +20,13 @@ const Loginpage = () => {
                 'Content-Type': 'application/x-www-form-urlencoded',
             }
         })
-        console.log("----res---",res);
         
        if(res?.status===200){
         localStorage.setItem('accessToken', res?.data?.access_token);
 
          navigate("/")
        }
-  
-    //     console.log("----object----",formObj)
-    //    const res = await   keycloakApi.post('/users',formObj)
-    //    console.log("---------res----",res);
+
     };
 
 

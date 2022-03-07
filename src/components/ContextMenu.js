@@ -5,7 +5,7 @@ import { ContextMenu, MenuItem, ContextMenuTrigger } from "react-contextmenu";
 
 const ContextMenuComponent = () => {
 	function handleClick(e, data) {
-		console.log(data.foo);
+		
 	  }
 	return (
 		<div  style={{border:"2px solid red"}}>

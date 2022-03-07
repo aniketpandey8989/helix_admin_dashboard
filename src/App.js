@@ -15,10 +15,9 @@ function App() {
   const [keycloak, setKeycloak] = useState(null);
 
   useEffect(() => {
-    const kc = Keycloak("./keycloak.json");
+    const kc = Keycloak("/keycloak.json");
 
     kc.init({ onLoad: "login-required" }).then((authenticated) => {
-      console.log("----kc-----", kc);
       // setAuthenticated(authenticated);
       setKeycloak(kc);
       if (authenticated) localStorage.setItem("accessToken", kc.token);
@@ -39,7 +38,8 @@ function App() {
   return (
     <BrowserRouter>
 
-      <AuthContext.Provider value={keycloak} >
+      {keycloak && (
+        <AuthContext.Provider value={keycloak} >
         <Routes>
           <Route path='/' element={<Dashboard />} />
           <Route path='/create-user' element={<CreateUser />} />
@@ -48,6 +48,7 @@ function App() {
           <Route path='/subcustomer/:id' element={<SubCustomer />} />
         </Routes>
       </AuthContext.Provider>
+      )}
 
     </BrowserRouter>
   );

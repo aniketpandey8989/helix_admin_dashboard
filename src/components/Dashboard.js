@@ -26,7 +26,6 @@ import ModelComponent from "./Model";
 
 const Dashboard = () => {
     const keycloak = useContext(AuthContext);
-    console.log("-----kc----",keycloak);
     const breadcrum = ["Users", "Roles/Permessions"];
     const [active, setActive] = useState(0);
     const [customerList, setCustomerList] = useState([]);
@@ -40,32 +39,6 @@ const Dashboard = () => {
     const [showAction, setShowAction] = useState(null);
     const [isTabOpen, setIsTabOpen] = useState(false);
 
-    // useEffect( () => {
-
-        
-
-
-
-    //     if (keycloak?.authenticated === true) {
-    //         if (keycloak.hasRealmRole("Create Customer")) {
-    //             setLoginUserRole("Admin");
-    //         }
-
-    //         if (keycloak.hasRealmRole("Create Sub Customer")) {
-    //             setLoginUserRole("Customer");
-    //         }
-
-    //         if (keycloak.hasRealmRole("Create User")) {
-    //             setLoginUserRole("Sub Customer");
-    //         }
-    //         if (keycloak.hasRealmRole("Create Sub User")) {
-    //             setLoginUserRole("User");
-    //         }
-    //         if (keycloak.hasRealmRole("Download Reports")) {
-    //             setLoginUserRole("Sub User");
-    //         }
-    //     }
-    // }, [keycloak]);
 
     const addUserToGroup = (user) => {
         switch (user) {
@@ -82,17 +55,10 @@ const Dashboard = () => {
 
     const getAllCustomer = async () => {
 
-
-        const resGroup = await keycloakApi.get(`/users/${keycloak?.subject}/groups`)
-        console.log("-------res---------",resGroup.data[0].name);
-    
-        setLoginUserRole(resGroup.data[0].name)
-
-
-
-
-
         try {
+            const resGroup = await keycloakApi.get(`/users/${keycloak?.subject}/groups`)
+            setLoginUserRole(resGroup.data[0].name)
+
             const accessToken = localStorage.getItem("accessToken");
 
             const res = await axios.get(
@@ -106,7 +72,6 @@ const Dashboard = () => {
             );
 
             let sorted_data = res?.data.sort(function (var1, var2) {
-                // console.log("------------",var1,var2);
                 var a = new Date(var1?.createdTimestamp).getTime(), b = new Date(var2?.createdTimestamp).getTime();
                 if (a > b) {
 
@@ -130,13 +95,7 @@ const Dashboard = () => {
         }
     }, [keycloak]);
 
-    const handleActive = (i) => {
-        setActive(i);
-    };
-    const handlePageChange = (selectedObject) => {
-        setSkip(selectedObject.selected * 10);
-    };
-
+  
     const handleDelete = async () => {
 
         try {

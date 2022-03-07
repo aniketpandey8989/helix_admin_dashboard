@@ -10,18 +10,12 @@ import { AuthContext } from '../App';
 import "./SubCustomer.css";
 
 
-
 const SubCustomer = () => {
     const [searchParams] = useSearchParams();
     const { id } = useParams();
-    
     const [customerId, setCustomerId] = useState(null)
     const [customerDetails, setCustomerDetails] = useState(null)
-
-
     const keycloak = useContext(AuthContext);
- 
-
     const breadcrum = ["Users", "Roles/Permessions"]
     const [active, setActive] = useState(0)
     const [customerList, setCustomerList] = useState([])
@@ -31,15 +25,10 @@ const SubCustomer = () => {
     const navigate = useNavigate()
     const [showModel, setShowModel] = useState(false)
     const [selectedRecord, setSelectedRecord] = useState(null)
-    // const [showModel, setShowModel] = useState(false);
-    // const [selectedRecord, setSelectedRecord] = useState(null);
     const [loginUserRole, setLoginUserRole] = useState("");
     const [showAction, setShowAction] = useState(null);
     const [isTabOpen, setIsTabOpen] = useState(false);
-    const [paramId,setParamId]=useState("")
-
-
-
+    const [paramId, setParamId] = useState("")
 
 
     useEffect(() => {
@@ -47,13 +36,13 @@ const SubCustomer = () => {
         getUserDetails()
 
 
-    }, [paramId,id])
+    }, [paramId, id, keycloak])
 
     const getUserDetails = async () => {
-       
+
         setCustomerId(id)
         let res = await keycloakApi.get(`/users/${id}`)
-       
+
         if (res.status === 200) {
             setCustomerDetails(res?.data)
         }
@@ -82,20 +71,9 @@ const SubCustomer = () => {
     const getAllCustomer = async () => {
 
         try {
-
             const resGroup = await keycloakApi.get(`/users/${keycloak?.subject}/groups`)
-            console.log("-------res---------",resGroup.data[0].name);
-        
             setLoginUserRole(resGroup.data[0].name)
-
-
-
-
-
-              const accessToken = localStorage.getItem("accessToken");
-            
-              
-
+            const accessToken = localStorage.getItem("accessToken");
             const res = await axios.get(
                 `${HELIX_SERVER_URL}/im_users/getImUser?id=${id}`,
                 {
@@ -105,9 +83,8 @@ const SubCustomer = () => {
                     },
                 }
             );
+            let sorted_data = res?.data.sort(function (var1, var2) {
 
-                        let sorted_data = res?.data.sort(function (var1, var2) {
-                
                 var a = new Date(var1?.createdTimestamp).getTime(), b = new Date(var2?.createdTimestamp).getTime();
                 if (a > b) {
 
@@ -121,12 +98,9 @@ const SubCustomer = () => {
                 return 0;
             })
             setCustomerList(sorted_data)
-            
-
-
 
         } catch (error) {
-            // navigate("/login")
+
 
         }
 
@@ -137,14 +111,14 @@ const SubCustomer = () => {
             getAllCustomer()
         }
 
-    }, [keycloak,paramId,id])
+    }, [keycloak, paramId, id])
 
 
 
     return (
         <div className='main_div'>
             <div className='detail_box'>
-                <div style={{display:'flex'}}>
+                <div style={{ display: 'flex' }}>
                     <div >
                         <h6>User Name</h6>
                         <h6>Email</h6>
@@ -155,126 +129,116 @@ const SubCustomer = () => {
                     </div>
                 </div>
             </div>
-            <table class="table table-bordered">
-                        <thead>
-                            <tr className="bg-heading">
-                                <th>
-                                    SNo.
-                                </th>
-                                <th>
-                                    Id
-                                </th>
-                                <th>
-                                    User Name
-                                </th>
-                                <th>
-                                    Email
-                                </th>
+            <table className="table table-bordered">
+                <thead>
+                    <tr className="bg-heading">
+                        <th>
+                            SNo.
+                        </th>
+                        <th>
+                            Id
+                        </th>
+                        <th>
+                            User Name
+                        </th>
+                        <th>
+                            Email
+                        </th>
 
+                        <th>
+                            Enabled
+                        </th>
+                        <th>
+                            Created At
+                        </th>
+                        {
+                            loginUserRole !== "Sub User" && (
                                 <th>
-                                    Enabled
+                                    Actions
                                 </th>
-                                <th>
-                                    Created At
+                            )
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+
+                    {customerList?.map((dta, idx) => {
+                        return (
+
+                            <tr key={idx} >
+
+                                <th scope="row">
+                                    {idx + 1}
                                 </th>
-                                {
-                                    loginUserRole !== "Sub User" && (
-                                        <th>
-                                            Actions
-                                        </th>
-                                    )
-                                }
+                                <td>
+                                    {dta?.id}
+                                </td>
+                                <td>
+                                    {dta?.username}
+                                </td>
+                                <td>
+                                    {dta?.email}
+                                </td>
+
+                                <td>
+                                    {dta?.enabled ? "true" : "false"}
+                                </td>
+                                <td>
+                                    {moment(dta?.createdTimestamp).format('L')}
+
+                                </td>
+
+                                {loginUserRole !== "Sub User" && (
+                                    <td>
+
+                                        <div>
+                                            <img className={`arrowDown  ${dta?.id === showAction ? "active_rotate" : ""}`} src={require("../assests/awrrowDown.png")}
+                                                onClick={() => {
+                                                    setIsTabOpen((prev) => !prev); setShowAction(prev => {
+                                                        if (prev !== dta?.id) {
+                                                            return dta?.id
+                                                        }
+                                                        else {
+                                                            return null
+                                                        }
+                                                    })
+                                                }}
+
+                                            />
+
+                                            <div className={`unorder  ${dta?.id === showAction ? "active_tab" : ""}`} >
+
+
+
+                                                <Dropdown isOpen={dta?.id === showAction ? true : false}>
+
+                                                    <DropdownMenu>
+
+                                                        <DropdownItem>
+                                                            <span className='listItem' onClick={() => { setParamId(dta?.id); navigate(`/subcustomer/${dta?.id}`) }}  >View</span>
+                                                        </DropdownItem>
+                                                        <DropdownItem>
+                                                            <span className='listItem' onClick={() => {
+                                                                setSelectedRecord(dta?.id)
+                                                                setShowModel(true)
+                                                            }}  >Delete</span>
+                                                        </DropdownItem>
+                                                    </DropdownMenu>
+                                                </Dropdown>
+
+                                            </div>
+
+                                        </div>
+
+                                    </td>
+                                )}
+
                             </tr>
-                        </thead>
-                        <tbody>
+                        )
+                    })}
 
-                            {customerList?.map((dta, idx) => {
-                                return (
-
-                                    <tr key={idx} >
-
-                                        <th scope="row">
-                                            {idx + 1}
-                                        </th>
-                                        <td>
-                                            {dta?.id}
-                                        </td>
-                                        <td>
-                                            {dta?.username}
-                                        </td>
-                                        <td>
-                                            {dta?.email}
-                                        </td>
-
-                                        <td>
-                                            {dta?.enabled ? "true" : "false"}
-                                        </td>
-                                        <td>
-                                            {moment(dta?.createdTimestamp).format('L')}
-
-                                        </td>
-
-                                        {loginUserRole !== "Sub User" && (
-                                            <td>
-
-                                                <div>
-                                                    <img className={`arrowDown  ${dta?.id === showAction ? "active_rotate" : ""}`} src={require("../assests/awrrowDown.png")}
-                                                        onClick={() => {
-                                                             setIsTabOpen((prev) => !prev); setShowAction(prev => {
-                                                                if (prev !== dta?.id) {
-                                                                    return dta?.id
-                                                                }
-                                                                else {
-                                                                    return null
-                                                                }
-                                                            })
-                                                        }}
-
-
-
-                                                    />
-
-
-                                                    <div className={`unorder  ${dta?.id === showAction ? "active_tab" : ""}`} >
-                                                    
-
-
-                                                        <Dropdown isOpen={dta?.id === showAction ? true : false}>
-                                                                                           
-                                                            <DropdownMenu>
-                                                               
-                                                                <DropdownItem>
-                                                                <span className='listItem' onClick={() => { setParamId(dta?.id);navigate(`/subcustomer/${dta?.id}`)}}  >View</span>
-                                                                </DropdownItem>
-                                                                <DropdownItem>
-                                                                <span className='listItem' onClick={() => {
-                                                    setSelectedRecord(dta?.id)
-                                                    setShowModel(true)
-                                                }}  >Delete</span>
-                                                                </DropdownItem>
-                                                            </DropdownMenu>
-                                                        </Dropdown>
-
-
-
-                                                    </div>
-
-                                                </div>
-
-                                            </td>
-                                        )}
-
-
-
-
-
-
-                                    </tr>
-                                )
-                            })}
-
-                        </tbody>
-                    </table>
+                </tbody>
+            </table>
 
         </div>
     )
