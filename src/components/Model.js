@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button, Modal,ModalBody,ModalHeader,ModalFooter} from 'reactstrap'
 
-const ModelComponent = ({showModel,setShowModel ,handleDelete}) => {
+const ModelComponent = ({showModel,setShowModel ,handleDelete,delUser}) => {
   return (
     <div>
     
@@ -13,7 +13,7 @@ const ModelComponent = ({showModel,setShowModel ,handleDelete}) => {
         Delete Customer
       </ModalHeader>
       <ModalBody>
-       Are you sure to delete this customer ?
+       Are you sure to delete this {delUser} ?
       </ModalBody>
       <ModalFooter>
         <Button

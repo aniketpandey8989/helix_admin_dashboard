@@ -3,10 +3,14 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { KeycloackContextProvider } from './components/Keycloack/KeycloackContext';
+
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+   <KeycloackContextProvider>
+   <App />
+   </KeycloackContextProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );

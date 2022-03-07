@@ -4,14 +4,13 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import keycloakApi, { HELIX_SERVER_URL } from '../apiCall';
-import { AuthContext } from '../App';
+import keycloakApi, { HELIX_SERVER_URL } from '../../apiCall';
+import { KeycloackContext } from '../Keycloack/KeycloackContext';
 import './CreateUser.css';
 
+
 const CreateUser = () => {
-    const keycloak = useContext(AuthContext);
-
-
+    const { keycloackValue, authenticated } = useContext(KeycloackContext)
     const { register, handleSubmit, watch, formState: { errors }, reset } = useForm();
     const navigate = useNavigate()
     const [disableSubmit, setDisableSubmit] = useState(false)
@@ -20,18 +19,14 @@ const CreateUser = () => {
 
     useEffect(() => {
         getUserGroup()
-
-
-
-    }, [keycloak])
+    }, [keycloackValue])
 
 
     const getUserGroup = async () => {
-        const resGroup = await keycloakApi.get(`/users/${keycloak?.subject}/groups`)
+        const resGroup = await keycloakApi.get(`/users/${keycloackValue?.subject}/groups`)
 
         setLoginUserRole(resGroup.data[0].name)
     }
-
 
     const addUserToGroup = (user) => {
 
@@ -87,7 +82,7 @@ const CreateUser = () => {
         let groupToAdd = addUserToGroup(loginUserRole)
         formObj.groups = [groupToAdd]
         formObj.enabled = true
-        formObj.parentUserId = keycloak?.subject;
+        formObj.parentUserId = keycloackValue?.subject;
         formObj.parentRole = loginUserRole
 
         const accessToken = localStorage.getItem("accessToken");

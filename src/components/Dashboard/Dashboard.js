@@ -1,72 +1,30 @@
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import moment from "moment";
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {
-    Button, Dropdown, DropdownItem, DropdownMenu, DropdownToggle, UncontrolledDropdown
+    Button, Dropdown, DropdownItem, DropdownMenu
 } from "reactstrap";
-import home from "../../src/assests/blackhome.png";
-import logoImg from "../../src/assests/helixSenseLogo.svg";
-import logout from "../../src/assests/logout.png";
-import plus from "../../src/assests/plus.png";
-import role from "../../src/assests/role.png";
-import userimg from "../../src/assests/user.png";
-import keycloakApi, { HELIX_SERVER_URL } from "../apiCall";
-import { AuthContext } from "../App";
+import plus from "../../../src/assests/plus.png";
+import keycloakApi, { HELIX_SERVER_URL } from "../../apiCall";
+import { KeycloackContext } from "../Keycloack/KeycloackContext";
+import ModelComponent from "../Model";
 import "./dashboard.css";
-import ModelComponent from "./Model";
-
-
-
-
 
 
 const Dashboard = () => {
-    const keycloak = useContext(AuthContext);
-    console.log("-----kc----",keycloak);
-    const breadcrum = ["Users", "Roles/Permessions"];
-    const [active, setActive] = useState(0);
     const [customerList, setCustomerList] = useState([]);
-    const [skip, setSkip] = useState(0);
-    const [recordCount, setRecordCount] = useState(0);
-    const [pageCount, setPageCount] = useState(0);
     const navigate = useNavigate();
     const [showModel, setShowModel] = useState(false);
     const [selectedRecord, setSelectedRecord] = useState(null);
     const [loginUserRole, setLoginUserRole] = useState("");
     const [showAction, setShowAction] = useState(null);
-    const [isTabOpen, setIsTabOpen] = useState(false);
 
-    // useEffect( () => {
-
-        
-
-
-
-    //     if (keycloak?.authenticated === true) {
-    //         if (keycloak.hasRealmRole("Create Customer")) {
-    //             setLoginUserRole("Admin");
-    //         }
-
-    //         if (keycloak.hasRealmRole("Create Sub Customer")) {
-    //             setLoginUserRole("Customer");
-    //         }
-
-    //         if (keycloak.hasRealmRole("Create User")) {
-    //             setLoginUserRole("Sub Customer");
-    //         }
-    //         if (keycloak.hasRealmRole("Create Sub User")) {
-    //             setLoginUserRole("User");
-    //         }
-    //         if (keycloak.hasRealmRole("Download Reports")) {
-    //             setLoginUserRole("Sub User");
-    //         }
-    //     }
-    // }, [keycloak]);
-
+    const [delUser,setDelUser]=useState("")
+    const { keycloackValue } = useContext(KeycloackContext)
     const addUserToGroup = (user) => {
         switch (user) {
             case "Admin":
@@ -81,22 +39,13 @@ const Dashboard = () => {
     };
 
     const getAllCustomer = async () => {
-
-
-        const resGroup = await keycloakApi.get(`/users/${keycloak?.subject}/groups`)
-        console.log("-------res---------",resGroup.data[0].name);
-    
+        const resGroup = await keycloakApi.get(`/users/${keycloackValue?.subject}/groups`)
         setLoginUserRole(resGroup.data[0].name)
-
-
-
-
-
         try {
             const accessToken = localStorage.getItem("accessToken");
 
             const res = await axios.get(
-                `${HELIX_SERVER_URL}/im_users/getImUser?id=${keycloak?.subject}`,
+                `${HELIX_SERVER_URL}/im_users/getImUser?id=${keycloackValue?.subject}`,
                 {
                     headers: {
                         "Content-Type": "application/json",
@@ -106,7 +55,6 @@ const Dashboard = () => {
             );
 
             let sorted_data = res?.data.sort(function (var1, var2) {
-                // console.log("------------",var1,var2);
                 var a = new Date(var1?.createdTimestamp).getTime(), b = new Date(var2?.createdTimestamp).getTime();
                 if (a > b) {
 
@@ -125,17 +73,10 @@ const Dashboard = () => {
     };
 
     useEffect(() => {
-        if (keycloak?.authenticated === true) {
+        if (keycloackValue?.authenticated === true) {
             getAllCustomer();
         }
-    }, [keycloak]);
-
-    const handleActive = (i) => {
-        setActive(i);
-    };
-    const handlePageChange = (selectedObject) => {
-        setSkip(selectedObject.selected * 10);
-    };
+    }, [keycloackValue]);
 
     const handleDelete = async () => {
 
@@ -143,7 +84,7 @@ const Dashboard = () => {
             const res = await keycloakApi.delete(`/users/${selectedRecord}`);
 
             setShowModel(false);
-            notify("User deleted sucessfully");
+            notify(` ${delUser}  deleted sucessfully`);
             getAllCustomer();
         } catch (error) {
             notifyError("Unauthorized");
@@ -177,11 +118,18 @@ const Dashboard = () => {
             },
         });
 
-    const handleLogout = useCallback(() => {
-        // localStorage.clear();
-        keycloak?.logout();
-        //   .then(() =>navigate("/"));
-    }, [keycloak]);
+
+
+
+    const onClickDelete = async (id)=>{
+        try {
+            const delresGroup = await keycloakApi.get(`/users/${id}/groups`)
+            setDelUser(delresGroup.data[0].name)
+            setSelectedRecord(id)
+            setShowModel(true)
+        } catch (error) {   
+        }
+    }   
 
     
 
@@ -192,38 +140,9 @@ const Dashboard = () => {
                 showModel={showModel}
                 setShowModel={setShowModel}
                 handleDelete={handleDelete}
+                delUser={delUser}
             />
-            <div className="heading_div">
-                <div>
-                    <img src={logoImg} alt="logo" className="logoimg " />
-                </div>
-                <div className="logout_main">
-                    <div className="name-logout">
-                        <h6>Hi, {keycloak?.idTokenParsed?.preferred_username}</h6>
-                        <UncontrolledDropdown>
-                            <DropdownToggle className="dropdown-style">
-                                <img src={userimg} alt="logo" className="user " />
-                            </DropdownToggle>
-                            <DropdownMenu >
-                                {/* <DropdownItem header> 
-                <img src={changelogo} alt="logo" className="logo-size " />Change logo</DropdownItem> */}
-                                <DropdownItem style={{ cursor: "pointer" }} header> <div onClick={() => handleLogout()} > <img src={logout} alt="logo" className="logo-size " />Logout</div></DropdownItem>
-
-                            </DropdownMenu>
-                        </UncontrolledDropdown>
-
-                    </div>
-                </div>
-            </div>
             <div className="sidebar">
-                <div className="bg-sidebar">
-                    <div className="img-style">
-                        <img src={home} title="User" alt="logo" className="user " />
-                    </div>
-                    {loginUserRole==="Admin"&&(<div className="img-style" onClick={() => { navigate(`/permission`) }}  >
-                        <img src={role} title="Roles/Permessions" alt="logo" className="user " />
-                    </div>)}
-                </div>
                 <div className="main-section">
                     <div className="button_div">
                         <div style={{ display: "flex" }}>
@@ -316,38 +235,19 @@ const Dashboard = () => {
                                             <td>
 
                                                 <div>
-                                                    <img className={`arrowDown  ${dta?.id === showAction ? "active_rotate" : ""}`} src={require("../assests/awrrowDown.png")}
-                                                        onClick={() => {
-                                                            setIsTabOpen((prev) => !prev); setShowAction(prev => {
-                                                                if (prev !== dta?.id) {
-                                                                    return dta?.id
-                                                                }
-                                                                else {
-                                                                    return null
-                                                                }
-                                                            })
-                                                        }}
-
-
-
+                                                    <img className={`arrowDown  ${dta?.id === showAction ? "active_rotate" : ""}`} src={require("../../assests/awrrowDown.png")}
                                                     />
-
-
                                                     <div className={`unorder  ${dta?.id === showAction ? "active_tab" : ""}`} >
-
-
-
                                                         <Dropdown isOpen={dta?.id === showAction ? true : false}>
 
                                                             <DropdownMenu>
 
                                                                 <DropdownItem>
-                                                      F              <span className='listItem' onClick={() => navigate(`/subcustomer/${dta?.id}`)}  >View</span>
+                                                                 <span className='listItem' onClick={() => navigate(`/subcustomer/${dta?.id}`)}  >View</span>
                                                                 </DropdownItem>
                                                                 <DropdownItem>
                                                                     <span className='listItem' onClick={() => {
-                                                                        setSelectedRecord(dta?.id)
-                                                                        setShowModel(true)
+                                                                        onClickDelete(dta?.id)
                                                                     }}  >Delete</span>
                                                                 </DropdownItem>
                                                             </DropdownMenu>
