@@ -10,7 +10,7 @@ import './CreateUser.css';
 
 
 const CreateUser = () => {
-    const { keycloackValue, authenticated } = useContext(KeycloackContext)
+    const { keycloackValue} = useContext(KeycloackContext)
     const { register, handleSubmit, watch, formState: { errors }, reset } = useForm();
     const navigate = useNavigate()
     const [disableSubmit, setDisableSubmit] = useState(false)
@@ -44,7 +44,7 @@ const CreateUser = () => {
     }
 
 
-    const notify = () => toast.success(`${addUserToGroup(loginUserRole)} is created successfully`, {
+    const notify = (message) => toast.success(message, {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -55,7 +55,7 @@ const CreateUser = () => {
         onClose: () => { navigate("/") }
     });
 
-    const notifyError = () => toast.error('Some thing went wrong', {
+    const notifyError = (message) => toast.error(message, {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -98,16 +98,19 @@ const CreateUser = () => {
 
             if (res.status === 201) {
                 setDisableSubmit(false)
-                notify()
+                notify(`${addUserToGroup(loginUserRole)} is created sucessfully`)
                 reset()
             }
         } catch (error) {
-
+           
             setDisableSubmit(false)
-            notifyError()
+             if(error.response.status===409)
+            notifyError(`${addUserToGroup(loginUserRole)} is already created`)
+            else{
+                notifyError("something went wrong")
+            }
         }
     };
-
 
     return (
         <div className='user_main_container'>
@@ -125,15 +128,22 @@ const CreateUser = () => {
 
                 <div className="form-group">
                     <label>Email address</label>
-                    <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email" {...register("email")} />
+                    <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email" {...register("email",{  required:true,pattern:/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/})} />
+                    {errors.email?.type==="pattern" && <small id="passwordHelp" class="text-danger">
+             email is not valid
+        </small> }
 
                 </div>
                 <div className="form-group">
                     <label >Password</label>
-                    <input type="password" className="form-control" id="exampleInputPassword1" placeholder="Password"{...register("password")} />
+                    <input type="password" className="form-control" id="exampleInputPassword1" placeholder="Password"{...register("password",{  required:"password must be minimum six characters, at least one letter, one number and one special character:" ,pattern:/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{6,}$/})} />
                 </div>
+                {errors.password?.type==="pattern" && <small id="passwordHelp" class="text-danger">
+             password must be minimum eight characters, at least one letter, one number and one special character:
+        </small> }
 
-                <button disabled={disableSubmit} type="submit" className="mt-4 btn btn-primary ">Submit</button>
+
+                <button type="submit" className="mt-4 btn btn-primary ">Submit</button>
             </form>
 
         </div>

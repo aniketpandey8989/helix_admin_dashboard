@@ -17,3 +17,8 @@
     justify-content: flex-start;
     align-items: center;
 }
+.listItem {
+    list-style: none;
+    cursor: pointer;
+    display: block;
+  }

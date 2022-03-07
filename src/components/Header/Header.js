@@ -13,11 +13,9 @@ import './Header.css';
 
 
 const Header = (props) => {
-    const { keycloackValue, authenticated,logout } = useContext(KeycloackContext)
+    const { keycloackValue,logout} = useContext(KeycloackContext)
     const navigate = useNavigate();
     const [loginUserRole, setLoginUserRole] = useState("");
-
-
 
     useEffect(()=>{
         loginUser()

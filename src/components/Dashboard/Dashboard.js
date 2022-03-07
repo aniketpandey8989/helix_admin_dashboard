@@ -1,30 +1,37 @@
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import moment from "moment";
-import React, { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useCallback, useContext, useEffect, useState } from "react";
+import { useNavigate,useParams } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {
     Button, Dropdown, DropdownItem, DropdownMenu
 } from "reactstrap";
-import plus from "../../../src/assests/plus.png";
 import keycloakApi, { HELIX_SERVER_URL } from "../../apiCall";
+import plus from "../../../src/assests/plus.png";
 import { KeycloackContext } from "../Keycloack/KeycloackContext";
 import ModelComponent from "../Model";
 import "./dashboard.css";
 
 
+
+
+
+
+
+
 const Dashboard = () => {
     const [customerList, setCustomerList] = useState([]);
     const navigate = useNavigate();
+    const { id } = useParams();
     const [showModel, setShowModel] = useState(false);
     const [selectedRecord, setSelectedRecord] = useState(null);
     const [loginUserRole, setLoginUserRole] = useState("");
     const [showAction, setShowAction] = useState(null);
-
     const [delUser,setDelUser]=useState("")
-    const { keycloackValue } = useContext(KeycloackContext)
+    const { keycloackValue, authenticated,logout } = useContext(KeycloackContext)
+
     const addUserToGroup = (user) => {
         switch (user) {
             case "Admin":
@@ -39,9 +46,9 @@ const Dashboard = () => {
     };
 
     const getAllCustomer = async () => {
-        const resGroup = await keycloakApi.get(`/users/${keycloackValue?.subject}/groups`)
-        setLoginUserRole(resGroup.data[0].name)
         try {
+            const resGroup = await keycloakApi.get(`/users/${keycloackValue?.subject}/groups`)
+        setLoginUserRole(resGroup.data[0].name)
             const accessToken = localStorage.getItem("accessToken");
 
             const res = await axios.get(
@@ -78,13 +85,15 @@ const Dashboard = () => {
         }
     }, [keycloackValue]);
 
+  
+
     const handleDelete = async () => {
 
         try {
             const res = await keycloakApi.delete(`/users/${selectedRecord}`);
 
             setShowModel(false);
-            notify(` ${delUser}  deleted sucessfully`);
+            notify("User deleted sucessfully");
             getAllCustomer();
         } catch (error) {
             notifyError("Unauthorized");
@@ -143,6 +152,7 @@ const Dashboard = () => {
                 delUser={delUser}
             />
             <div className="sidebar">
+                
                 <div className="main-section">
                     <div className="button_div">
                         <div style={{ display: "flex" }}>
@@ -206,6 +216,7 @@ const Dashboard = () => {
                         <tbody className="table_body">
 
                             {customerList?.map((dta, idx) => {
+                              
                                 return (
 
                                     <tr key={idx} >
@@ -233,11 +244,29 @@ const Dashboard = () => {
 
                                         {loginUserRole !== "Sub User" && (
                                             <td>
-
+                                                   
                                                 <div>
                                                     <img className={`arrowDown  ${dta?.id === showAction ? "active_rotate" : ""}`} src={require("../../assests/awrrowDown.png")}
+                                                        onClick={() => {
+                                                           setShowAction(prev => {
+                                                                if (prev !== dta?.id) {
+                                                                    return dta?.id
+                                                                }
+                                                                else {
+                                                                    return null
+                                                                }
+                                                            })
+                                                        }}
+
+
+
                                                     />
+
+
                                                     <div className={`unorder  ${dta?.id === showAction ? "active_tab" : ""}`} >
+
+
+
                                                         <Dropdown isOpen={dta?.id === showAction ? true : false}>
 
                                                             <DropdownMenu>
