@@ -143,7 +143,9 @@ const CreateUser = () => {
         </small> }
 
 
-                <button type="submit" className="mt-4 btn btn-primary ">Submit</button>
+              <div>
+              <button type="submit" className="mt-4 btn btn-primary ">Submit</button>
+              </div>
             </form>
 
         </div>
