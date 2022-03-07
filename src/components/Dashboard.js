@@ -342,7 +342,7 @@ const Dashboard = () => {
                                                             <DropdownMenu>
 
                                                                 <DropdownItem>
-                                                      F              <span className='listItem' onClick={() => navigate(`/subcustomer/${dta?.id}`)}  >View</span>
+                                                                   <span className='listItem' onClick={() => navigate(`/subcustomer/${dta?.id}`)}  >View</span>
                                                                 </DropdownItem>
                                                                 <DropdownItem>
                                                                     <span className='listItem' onClick={() => {
