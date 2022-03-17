@@ -65,7 +65,7 @@ const Permissions = () => {
             else {
                 const accessToken = localStorage.getItem("accessToken");
 
-                let res = await axios.delete(`${BASE_URL}/groups/${group}/role-mappings/realm`, {
+                let res = await axios.delete(`${process.env.BASE_URL}/groups/${group}/role-mappings/realm`, {
                     headers: {
                         Authorization: `Bearer ${accessToken}`,
                         'Content-Type': 'application/json',

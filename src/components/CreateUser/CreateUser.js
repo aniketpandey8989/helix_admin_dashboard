@@ -88,7 +88,7 @@ const CreateUser = () => {
         const accessToken = localStorage.getItem("accessToken");
 
         try {
-            const res = await axios.post(`${HELIX_SERVER_URL}/im_users/createImUser`, formObj, {
+            const res = await axios.post(`${process.env.HELIX_SERVER_URL}/im_users/createImUser`, formObj, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${accessToken}`

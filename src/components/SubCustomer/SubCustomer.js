@@ -48,7 +48,7 @@ const SubCustomer = () => {
             setLoginUserRole(resGroup.data[0].name)
             const accessToken = localStorage.getItem("accessToken");
             const res = await axios.get(
-                `${HELIX_SERVER_URL}/im_users/getImUser?id=${id}`,
+                `${process.env.HELIX_SERVER_URL}/im_users/getImUser?id=${id}`,
                 {
                     headers: {
                         "Content-Type": "application/json",

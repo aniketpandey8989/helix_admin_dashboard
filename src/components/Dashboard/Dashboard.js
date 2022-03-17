@@ -52,7 +52,7 @@ const Dashboard = () => {
             const accessToken = localStorage.getItem("accessToken");
 
             const res = await axios.get(
-                `${HELIX_SERVER_URL}/im_users/getImUser?id=${keycloackValue?.subject}`,
+                `${process.env.HELIX_SERVER_URL}/im_users/getImUser?id=${keycloackValue?.subject}`,
                 {
                     headers: {
                         "Content-Type": "application/json",
