@@ -8,7 +8,7 @@ export const HELIX_SERVER_URL="http://ec2-18-192-107-104.eu-central-1.compute.am
 
 
 const keycloakApi = axios.create({
-    baseURL: BASE_URL,
+    baseURL:process.env.BASE_URL,
 });
 
 keycloakApi.interceptors.request.use((request) => {
