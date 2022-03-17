@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import keycloakApi, { HELIX_SERVER_URL } from '../../apiCall';
+import keycloakApi, { REACT_APP_HELIX_SERVER_URL } from '../../apiCall';
 import { KeycloackContext } from '../Keycloack/KeycloackContext';
 import './CreateUser.css';
 
@@ -88,7 +88,7 @@ const CreateUser = () => {
         const accessToken = localStorage.getItem("accessToken");
 
         try {
-            const res = await axios.post(`${process.env.HELIX_SERVER_URL}/im_users/createImUser`, formObj, {
+            const res = await axios.post(`${process.env.REACT_APP_HELIX_SERVER_URL}/im_users/createImUser`, formObj, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${accessToken}`

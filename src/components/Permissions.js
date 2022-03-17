@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import keycloakApi, { BASE_URL } from '../apiCall';
+import keycloakApi, { REACT_APP_KEYCLOAK_URL } from '../apiCall';
 import './Permission.css'
 import { useForm } from "react-hook-form";
 import { Form, FormGroup, Label, Input, FormText, Button, Table, Dropdown, DropdownItem, DropdownMenu, DropdownToggle } from 'reactstrap'
@@ -77,7 +77,7 @@ const Permissions = () => {
        else{
         const accessToken = localStorage.getItem("accessToken");
 
-     let res = await   axios.delete(`${process.env.BASE_URL}/groups/${group}/role-mappings/realm`, {
+     let res = await   axios.delete(`${process.env.REACT_APP_KEYCLOAK_URL}/groups/${group}/role-mappings/realm`, {
             headers: {
               Authorization: `Bearer ${accessToken}`,
               'Content-Type': 'application/json',

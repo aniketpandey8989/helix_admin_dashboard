@@ -4,7 +4,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import 'react-toastify/dist/ReactToastify.css';
 import { Dropdown, DropdownItem, DropdownMenu } from 'reactstrap';
-import keycloakApi, { HELIX_SERVER_URL } from '../../apiCall';
+import keycloakApi, { REACT_APP_HELIX_SERVER_URL } from '../../apiCall';
 import { KeycloackContext } from '../Keycloack/KeycloackContext';
 import "./SubCustomer.css";
 import { toast, ToastContainer } from "react-toastify";
@@ -48,7 +48,7 @@ const SubCustomer = () => {
             setLoginUserRole(resGroup.data[0].name)
             const accessToken = localStorage.getItem("accessToken");
             const res = await axios.get(
-                `${process.env.HELIX_SERVER_URL}/im_users/getImUser?id=${id}`,
+                `${process.env.REACT_APP_HELIX_SERVER_URL}/im_users/getImUser?id=${id}`,
                 {
                     headers: {
                         "Content-Type": "application/json",

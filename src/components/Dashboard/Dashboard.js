@@ -8,7 +8,7 @@ import "react-toastify/dist/ReactToastify.css";
 import {
     Button, Dropdown, DropdownItem, DropdownMenu
 } from "reactstrap";
-import keycloakApi, { HELIX_SERVER_URL } from "../../apiCall";
+import keycloakApi, { REACT_APP_HELIX_SERVER_URL } from "../../apiCall";
 import plus from "../../../src/assests/plus.png";
 import { KeycloackContext } from "../Keycloack/KeycloackContext";
 import ModelComponent from "../Model";
@@ -52,7 +52,7 @@ const Dashboard = () => {
             const accessToken = localStorage.getItem("accessToken");
 
             const res = await axios.get(
-                `${process.env.HELIX_SERVER_URL}/im_users/getImUser?id=${keycloackValue?.subject}`,
+                `${process.env.REACT_APP_HELIX_SERVER_URL}/im_users/getImUser?id=${keycloackValue?.subject}`,
                 {
                     headers: {
                         "Content-Type": "application/json",
@@ -80,6 +80,7 @@ const Dashboard = () => {
     };
 
     useEffect(() => {
+        console.log("-keyclockkk----url----",process.env.REACT_APP_REACT_APP_KEYCLOAK_URL);
         if (keycloackValue?.authenticated === true) {
             getAllCustomer();
         }
