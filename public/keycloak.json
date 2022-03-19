@@ -1,6 +1,6 @@
 {
   "realm": "washroom",
-  "auth-server-url": "http://ec2-3-125-248-157.eu-central-1.compute.amazonaws.com:8080/auth/",
+  "auth-server-url": "http://ec2-3-68-128-171.eu-central-1.compute.amazonaws.com:8080/auth/",
   "ssl-required": "none",
   "resource": "admin-dash",
   "public-client": true,
