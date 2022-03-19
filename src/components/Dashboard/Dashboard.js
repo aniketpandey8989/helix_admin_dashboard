@@ -161,7 +161,7 @@ const Dashboard = () => {
                                 <Button
                                     color="success"
                                     onClick={() => {
-                                        window.open("http://ec2-18-192-107-104.eu-central-1.compute.amazonaws.com:3010/", "_blank");
+                                        window.open(`${process.env.REACT_APP_HELIX_APP_URL}`, "_blank");
                                     }}
                                 >
                                     Helix App
