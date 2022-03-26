@@ -10,6 +10,7 @@ import role from "../../assests/role.png";
 import userimg from "../../assests/user.png";
 import { KeycloackContext } from "../Keycloack/KeycloackContext";
 import './Header.css';
+import configimg from '../../assests/config.jpg'
 
 
 const Header = (props) => {
@@ -55,6 +56,9 @@ const Header = (props) => {
                 </div>
                 {loginUserRole === "Admin" && (<div className="img-style" onClick={() => { navigate(`/permission`) }}  >
                     <img src={role} title="Roles/Permessions" alt="logo" className="user " />
+                </div>)}
+                {loginUserRole === "Admin" && (<div className="img-style" onClick={() => { navigate(`/sensor-config`) }}  >
+                    <img src={configimg} title="configuration" alt="logo" className="user " />
                 </div>)}
                 
             </div>
