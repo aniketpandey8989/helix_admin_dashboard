@@ -28,6 +28,7 @@
     border-radius: 50px;
     height: 40px;
     object-fit: cover;
+    cursor: pointer;
   }
   .name-logout {
     display: flex;
@@ -37,6 +38,7 @@
   .img-style {
     background-color: #fff;
     padding: 5px;
+    cursor: pointer;
   }
   .bg-btn {
     border-color: #ea6a47;

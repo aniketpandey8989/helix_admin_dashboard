@@ -16,9 +16,8 @@ const SensorConfig = () => {
     const { keycloackValue, authenticated,logout } = useContext(KeycloackContext)
 
 
-    const onSubmit = async (data,e) => {
+    const onSubmit = async (data) => {
         // display form data on success
-// alert('SUCCESS!! :-)\n\n' + JSON.stringify({userId:keycloackValue?.subject,data:data}, null, 4));
         const accessToken = localStorage.getItem("accessToken");
 
             const res = await axios.post(
@@ -30,7 +29,7 @@ const SensorConfig = () => {
                     },
                 }
             );
-            console.log("----res----",res);
+            // console.log("----res----",res);
             
             
             reset({})
@@ -47,7 +46,7 @@ const SensorConfig = () => {
             <div className='main_container'>
                 <Button
                     color="success"
-                    onClick={() => append({ label: '', startRange: '',endRange:'',startDescription:'',endDescription:'' })}
+                    onClick={() => append({ })}
                     className="Add_button"
 
                 >
@@ -58,8 +57,8 @@ const SensorConfig = () => {
                 <form onSubmit={handleSubmit(onSubmit)} >
                 {fields.length >0 && (
                      <div className="form-group" style={{padding:"20px"}}>
-                     <label>Device id:</label>
-                     <input type="text"  required={true}  name={`deviceId`} {...register(`deviceId`,{required: true}) }      className="form-control" aria-describedby="emailHelp" placeholder="Device id" />
+                     <label>Sensor code:</label>
+                     <input type="text"  required={true}  name={`deviceId`} {...register(`sensorCode`,{required: true}) }      className="form-control" aria-describedby="emailHelp" placeholder="Sensor code" />
 
                  </div>
                     
