@@ -8,7 +8,7 @@ import Permissions from './components/Permissions/Permissions';
 import { KeycloackContext } from './components/Keycloack/KeycloackContext';
 import Header from './components/Header/Header';
 import SensorConfig from './components/SensorConfig/SensorConfig';
-
+import ViewConfigData from './components/SensorConfig/ViewConfigData';
 
 
 function App() {
@@ -27,6 +27,8 @@ function App() {
               <Route path='/permission' element={<Permissions />} />
               <Route path='/sensor-config' element={<SensorConfig />} />
               <Route path='/subcustomer/:id' element={<SubCustomer />} />
+              <Route path='/view-configdata' element={<ViewConfigData />} />
+
             </Routes>
           </Header>
         </div>
