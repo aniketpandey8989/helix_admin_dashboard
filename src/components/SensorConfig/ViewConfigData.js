@@ -4,7 +4,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Dropdown, DropdownItem, DropdownMenu } from "reactstrap";
+import { Dropdown, DropdownItem, DropdownMenu, Button } from "reactstrap";
 import { KeycloackContext } from "../Keycloack/KeycloackContext";
 import ModelComponent from "../Model";
 // import ViewConfigData from './'
@@ -90,7 +90,7 @@ const ViewConfigData = () => {
       draggable: true,
       progress: undefined,
       onClose: () => {
-        navigate("/");
+        navigate("/view-configdata");
       },
     });
 
@@ -114,8 +114,16 @@ const ViewConfigData = () => {
       <div className="sidebar">
         <div className="main-section">
           {/* ---------------------------table-------------------- */}
-          <div className="table_content">
+          <div className="table_content_config_data">
             {/* <h5> All {addUserToGroup(loginUserRole)} List</h5> */}
+            <Button
+              color="danger"
+              onClick={() => {
+                navigate(`/sensor-config`);
+              }}
+            >
+              Add Config
+            </Button>
           </div>
           <table className="table table-bordered">
             <thead>
@@ -173,10 +181,11 @@ const ViewConfigData = () => {
                                 <span
                                   className="listItem"
                                   onClick={() =>
-                                    navigate(`/subcustomer/${dta?._id}`)
+                                    navigate(`/update-configdata/${dta?._id}`)
+                                    // navigate(`/update-configdata`)
                                   }
                                 >
-                                  View
+                                  Edit
                                 </span>
                               </DropdownItem>
                               <DropdownItem>

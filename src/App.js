@@ -9,7 +9,7 @@ import { KeycloackContext } from './components/Keycloack/KeycloackContext';
 import Header from './components/Header/Header';
 import SensorConfig from './components/SensorConfig/SensorConfig';
 import ViewConfigData from './components/SensorConfig/ViewConfigData';
-
+import UpdateConfigData from './components/SensorConfig/UpdateConfigData';
 
 function App() {
   const { keycloackValue, authenticated } = useContext(KeycloackContext)
@@ -28,6 +28,7 @@ function App() {
               <Route path='/sensor-config' element={<SensorConfig />} />
               <Route path='/subcustomer/:id' element={<SubCustomer />} />
               <Route path='/view-configdata' element={<ViewConfigData />} />
+              <Route path='/update-configdata/:id' element={<UpdateConfigData />} />
 
             </Routes>
           </Header>

@@ -57,7 +57,7 @@ const Header = (props) => {
                 {loginUserRole === "Admin" && (<div className="img-style" onClick={() => { navigate(`/permission`) }}  >
                     <img src={role} title="Roles/Permessions" alt="logo" className="user " />
                 </div>)}
-                {loginUserRole === "Admin" && (<div className="img-style" onClick={() => { navigate(`/sensor-config`) }}  >
+                {loginUserRole === "Admin" && (<div className="img-style" onClick={() => { navigate(`/view-configdata`) }}  >
                     <img src={configimg} title="configuration" alt="logo" className="user " />
                 </div>)}
                 

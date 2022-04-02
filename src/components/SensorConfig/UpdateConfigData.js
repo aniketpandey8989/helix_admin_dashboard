@@ -1,27 +1,61 @@
 import React, { useState, useEffect, useContext } from "react";
-import "./sensorconfig.css";
+// import "./sensorconfig.css";
 import { Button, Dropdown, DropdownItem, DropdownMenu } from "reactstrap";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 
 import { useForm, useFieldArray } from "react-hook-form";
 import keycloakApi from "../../apiCall";
 import axios from "axios";
 import { KeycloackContext } from "../Keycloack/KeycloackContext";
 
-const SensorConfig = () => {
-  const { register, control, handleSubmit, reset, formState, watch } =
+const UpdateConfigData = () => {
+  const [configData, setConfigData] = useState([{}]);
+  const { register, control, handleSubmit, reset, formState, setValue,watch ,} =
     useForm();
+  const { id } = useParams();
+
   const { fields, append, remove } = useFieldArray({ name: "config", control });
   const { keycloackValue, authenticated, logout } =
     useContext(KeycloackContext);
 
+  useEffect(async () => {
+    console.log(id, "id in update");
+
+    try {
+      const accessToken = localStorage.getItem("accessToken");
+      let res = await axios.get(
+        `${process.env.REACT_APP_HELIX_SERVER_URL}/sensor_config/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      console.log("------res------in useEffect", res.data);
+      if(res.status===200){
+          let receiveData = res.data
+        setValue("sensorCode",receiveData.sensorCode)
+        setValue("sensorType",receiveData.sensorType)
+        setValue("config",receiveData.sensor_config)
+        
+
+      }
+      
+
+      // setConfigList(res.data);
+      setConfigData(res?.data);
+    } catch (error) {}
+  }, []);
+  //   http://localhost:8081/api/sensor_config/6247e021e78d8d16f8480c52
   const onSubmit = async (data) => {
     console.log(data, "data onSubmit");
     // display form data on success
     const accessToken = localStorage.getItem("accessToken");
 
-    const res = await axios.post(
-      `${process.env.REACT_APP_HELIX_SERVER_URL}/sensor_config`,
-      { userId: keycloackValue?.subject, data: data },
+    const res = await axios.put(
+      `${process.env.REACT_APP_HELIX_SERVER_URL}/sensor_config/${id}`,
+      data,
       {
         headers: {
           "Content-Type": "application/json",
@@ -29,14 +63,14 @@ const SensorConfig = () => {
         },
       }
     );
-    // console.log("----res----",res);
+    console.log("----res----",res);
 
     reset({});
   };
 
   return (
     <div>
-      <h3>Add Sensor Configuration</h3>
+      <h3>Edit Sensor Configuration</h3>
       <div className="main_container">
         <Button
           color="success"
@@ -45,8 +79,12 @@ const SensorConfig = () => {
         >
           {fields.length === 0 ? "Add config" : "Add more config"}
         </Button>
-
+        
         <form onSubmit={handleSubmit(onSubmit)}>
+          {/* {configData &&
+                      configData?.map((dt, idx) => (
+                        console.log(dt,"===dt")
+                      ))} */}
           {fields.length > 0 && (
             <div className="form-group" style={{ padding: "20px" }}>
               <label>Sensor code:</label>
@@ -54,6 +92,7 @@ const SensorConfig = () => {
                 type="text"
                 required={true}
                 name={`deviceId`}
+                // value={configData.sensorCode}
                 {...register(`sensorCode`, { required: true })}
                 className="form-control"
                 aria-describedby="emailHelp"
@@ -64,6 +103,7 @@ const SensorConfig = () => {
                 <input
                   type="text"
                   required={true}
+                //   value={configData.sensorType}
                   name={`deviceId`}
                   {...register(`sensorType`, { required: true })}
                   className="form-control"
@@ -79,6 +119,10 @@ const SensorConfig = () => {
               <div className="label_div">
                 <div className="form-group">
                   <label>Config Name:</label>
+                  {configData &&
+                    configData.sensor_config?.map((dt, idx) => {
+                      console.log(dt, "mappppppppp");
+                    })}
                   <input
                     type="text"
                     required={true}
@@ -129,18 +173,10 @@ const SensorConfig = () => {
                     placeholder="End range"
                   />
                 </div>
-                {/* <div className="form-group">
-                                <label>Start range description:</label>
-                                <input type="text"  name={`config[${i}]startRangeDescription`} {...register(`config.${i}.startRangeDescription`)}  className="form-control" aria-describedby="emailHelp" placeholder="Start range description" />
 
-                            </div> */}
               </div>
               <div className="end_div">
-                {/* <div className="form-group">
-                                <label>End Range:</label>
-                                <input type="number"  required={true} name={`config[${i}]endRange`} {...register(`config.${i}.endRange`,{required: true})}  className="form-control" aria-describedby="emailHelp" placeholder="End range" />
 
-                            </div> */}
 
                 <div className="form-group">
                   <label>Description:</label>
@@ -151,8 +187,7 @@ const SensorConfig = () => {
                     className="form-control"
                     aria-describedby="emailHelp"
                     placeholder="Description"
-                    // required={true}
-
+                    required={true}
                   />
                 </div>
                 <div className="form-group">
@@ -163,8 +198,7 @@ const SensorConfig = () => {
                     aria-describedby="emailHelp"
                     placeholder="Unit"
                     {...register(`config.${i}.unit`)}
-                    // required={true}
-
+                     required={true}
                   />
                 </div>
               </div>
@@ -182,7 +216,7 @@ const SensorConfig = () => {
 
           {fields.length > 0 && (
             <div className="submit_div">
-              <Button color="success">Submit</Button>
+              <Button color="success">Update</Button>
             </div>
           )}
         </form>
@@ -191,4 +225,4 @@ const SensorConfig = () => {
   );
 };
 
-export default SensorConfig;
+export default UpdateConfigData;

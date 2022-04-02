@@ -22,9 +22,12 @@
   .button_mar20 {
     margin-left: 20px;
   }
-  .table_content {
+  .table_content_config_data {
     width: "100%";
     margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
   }
   .span {
     margin-right: 20px;
