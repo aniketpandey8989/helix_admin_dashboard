@@ -1,15 +1,17 @@
-import React, { useState, useEffect, useContext } from "react";
-// import "./sensorconfig.css";
-import { Button, Dropdown, DropdownItem, DropdownMenu } from "reactstrap";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-
-import { useForm, useFieldArray } from "react-hook-form";
-import keycloakApi from "../../apiCall";
 import axios from "axios";
+import React, { useContext, useEffect, useState } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
+import { useNavigate, useParams } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+// import "./sensorconfig.css";
+import { Button } from "reactstrap";
 import { KeycloackContext } from "../Keycloack/KeycloackContext";
+
 
 const UpdateConfigData = () => {
   const [configData, setConfigData] = useState([{}]);
+  const navigate = useNavigate();
   const { register, control, handleSubmit, reset, formState, setValue,watch ,} =
     useForm();
   const { id } = useParams();
@@ -49,6 +51,7 @@ const UpdateConfigData = () => {
   }, []);
   //   http://localhost:8081/api/sensor_config/6247e021e78d8d16f8480c52
   const onSubmit = async (data) => {
+   try {
     console.log(data, "data onSubmit");
     // display form data on success
     const accessToken = localStorage.getItem("accessToken");
@@ -64,12 +67,54 @@ const UpdateConfigData = () => {
       }
     );
     console.log("----res----",res);
+    notify(" Record  updated successfully");
 
     reset({});
+     
+   } catch (error) {
+    notifyError("Something went wrong");
+
+     
+   }
   };
+
+
+  const notifyError = (message) =>
+        toast.error(message, {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            onClose: () => {
+                // setShowModel(false);
+            },
+        });
+
+    const notify = (message) =>
+        toast.success(message, {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            onClose: () => {
+                navigate("/view-configdata");
+            },
+        });
+
+
+
+
+
 
   return (
     <div>
+         <ToastContainer theme="dark" />
       <h3>Edit Sensor Configuration</h3>
       <div className="main_container">
         <Button
@@ -116,13 +161,10 @@ const UpdateConfigData = () => {
 
           {fields.map((item, i) => (
             <div className="formbox_div" key={i}>
-              <div className="label_div">
+            <div className="label_div">
+              <div>
                 <div className="form-group">
                   <label>Config Name:</label>
-                  {configData &&
-                    configData.sensor_config?.map((dt, idx) => {
-                      console.log(dt, "mappppppppp");
-                    })}
                   <input
                     type="text"
                     required={true}
@@ -130,7 +172,7 @@ const UpdateConfigData = () => {
                     {...register(`config.${i}.label`, { required: true })}
                     className="form-control"
                     aria-describedby="emailHelp"
-                    placeholder="Label"
+                    placeholder="Config Name"
                   />
                 </div>
                 <div className="form-group">
@@ -148,6 +190,27 @@ const UpdateConfigData = () => {
                   />
                 </div>
               </div>
+              <div className="unit_div">
+
+                <div className="form-group">
+                  <label>Unit:</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    aria-describedby="emailHelp"
+                    placeholder="Unit"
+                    {...register(`config.${i}.unit`)}
+                  // required={true}
+
+                  />
+                </div>
+              </div>
+
+
+            </div>
+            <div>
+
+
               <div className="start_div">
                 <div className="form-group">
                   <label>Start Range:</label>
@@ -161,7 +224,7 @@ const UpdateConfigData = () => {
                     placeholder="Start range"
                   />
                 </div>
-                <div className="form-group">
+                <div className="form-group  mr20 ">
                   <label>End Range:</label>
                   <input
                     type="number"
@@ -176,42 +239,39 @@ const UpdateConfigData = () => {
 
               </div>
               <div className="end_div">
+              
 
+              <div className="form-group">
+                <label>Description:</label>
+                <input
+                  type="text"
+                  name={`config[${i}]description`}
+                  {...register(`config.${i}.description`)}
+                  className="form-control"
+                  aria-describedby="emailHelp"
+                  placeholder="Description"
+                // required={true}
 
-                <div className="form-group">
-                  <label>Description:</label>
-                  <input
-                    type="text"
-                    name={`config[${i}]description`}
-                    {...register(`config.${i}.description`)}
-                    className="form-control"
-                    aria-describedby="emailHelp"
-                    placeholder="Description"
-                    required={true}
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Unit:</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    aria-describedby="emailHelp"
-                    placeholder="Unit"
-                    {...register(`config.${i}.unit`)}
-                     required={true}
-                  />
-                </div>
+                />
               </div>
-              <div className="button_div">
-                <Button
-                  color="primary"
-                  style={{ marginLeft: "20px" }}
-                  onClick={() => remove(i)}
-                >
-                  Remove
-                </Button>
-              </div>
+
             </div>
+
+
+
+
+            </div>
+           
+            <div className="button_div">
+              <Button
+                color="primary"
+                style={{ marginLeft: "20px" }}
+                onClick={() => remove(i)}
+              >
+                Remove
+              </Button>
+            </div>
+          </div>
           ))}
 
           {fields.length > 0 && (

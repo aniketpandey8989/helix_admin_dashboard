@@ -94,7 +94,7 @@ const Dashboard = () => {
             const res = await keycloakApi.delete(`/users/${selectedRecord}`);
 
             setShowModel(false);
-            notify("User deleted sucessfully");
+            notify("User deleted successfully");
             getAllCustomer();
         } catch (error) {
             notifyError("Unauthorized");
@@ -151,6 +151,7 @@ const Dashboard = () => {
                 setShowModel={setShowModel}
                 handleDelete={handleDelete}
                 delUser={delUser}
+               heading={"Customer"}
             />
             <div className="sidebar">
                 

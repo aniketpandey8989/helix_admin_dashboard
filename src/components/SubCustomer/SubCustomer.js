@@ -99,7 +99,7 @@ const SubCustomer = () => {
         try {
             const res = await keycloakApi.delete(`/users/${selectedRecord}`);
             setShowModel(false);
-            notify(`${delUser} deleted sucessfully`);
+            notify(`${delUser} deleted successfully`);
             getAllCustomer();
         } catch (error) {
             notifyError("Unauthorized");

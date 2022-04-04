@@ -98,7 +98,7 @@ const CreateUser = () => {
 
             if (res.status === 201) {
                 setDisableSubmit(false)
-                notify(`${addUserToGroup(loginUserRole)} is created sucessfully`)
+                notify(`${addUserToGroup(loginUserRole)} is created successfully`)
                 reset()
             }
         } catch (error) {

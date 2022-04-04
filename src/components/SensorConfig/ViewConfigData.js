@@ -60,7 +60,7 @@ const ViewConfigData = () => {
         }
       );
       setShowModel(false);
-      notify("User deleted sucessfully");
+      notify("Sensor configuration deleted successfully");
       getConfigData();
     } catch (error) {
       notifyError("Unauthorized");
@@ -109,13 +109,14 @@ const ViewConfigData = () => {
         showModel={showModel}
         setShowModel={setShowModel}
         handleDelete={handleDelete}
-        // delUser={delUser}
+         delUser={"record"}
+         heading={"Sensor Configuration"}
       />
       <div className="sidebar">
         <div className="main-section">
           {/* ---------------------------table-------------------- */}
           <div className="table_content_config_data">
-            {/* <h5> All {addUserToGroup(loginUserRole)} List</h5> */}
+            <h5> Sensor Configuration List</h5>
             <Button
               color="danger"
               onClick={() => {

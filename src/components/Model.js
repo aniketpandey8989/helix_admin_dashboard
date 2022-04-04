@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button, Modal,ModalBody,ModalHeader,ModalFooter} from 'reactstrap'
 
-const ModelComponent = ({showModel,setShowModel ,handleDelete,delUser}) => {
+const ModelComponent = ({showModel,setShowModel ,handleDelete,delUser,heading}) => {
   return (
     <div>
     
@@ -10,7 +10,7 @@ const ModelComponent = ({showModel,setShowModel ,handleDelete,delUser}) => {
       
     >
       <ModalHeader toggle={()=>setShowModel(false)}>
-        Delete Customer
+        Delete {heading}
       </ModalHeader>
       <ModalBody>
        Are you sure to delete this {delUser} ?
