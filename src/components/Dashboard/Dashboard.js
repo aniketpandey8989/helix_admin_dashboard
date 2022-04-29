@@ -80,7 +80,7 @@ const Dashboard = () => {
     };
 
     useEffect(() => {
-        console.log("-keyclockkk----url----",process.env.REACT_APP_REACT_APP_KEYCLOAK_URL);
+        console.log("-keyclockkk----url----",process.env.REACT_APP_KEYCLOAK_URL);
         if (keycloackValue?.authenticated === true) {
             getAllCustomer();
         }
