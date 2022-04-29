@@ -69,10 +69,13 @@ const CreateUser = () => {
 
 
     const onSubmit = async data => {
+        console.log("-----------data-----",data);
         setDisableSubmit(true)
 
         let formObj = {}
         formObj.username = data.username
+        formObj.firstName = data.firstName
+        formObj.lastName = data.lastName
         formObj.email = data.email
         formObj.credentials = [{
             type: "password",
@@ -97,6 +100,7 @@ const CreateUser = () => {
             })
 
             if (res.status === 201) {
+                console.log("----rs----",res);
                 setDisableSubmit(false)
                 notify(`${addUserToGroup(loginUserRole)} is created successfully`)
                 reset()
@@ -120,6 +124,21 @@ const CreateUser = () => {
             <h3>Create {addUserToGroup(loginUserRole)}</h3>
 
             <form onSubmit={handleSubmit(onSubmit)}  >
+
+            <div className="form-group">
+                    <label>First Name</label>
+                    <input type="text" className="form-control" aria-describedby="emailHelp" placeholder="First Name"  {...register("firstName")} />
+
+                </div>
+
+                <div className="form-group">
+                    <label>Last  Name</label>
+                    <input type="text" className="form-control" aria-describedby="emailHelp" placeholder="Last Name"  {...register("lastName")} />
+
+                </div>
+
+
+
                 <div className="form-group">
                     <label>User name</label>
                     <input type="text" className="form-control" aria-describedby="emailHelp" placeholder="User Name"  {...register("username")} />
