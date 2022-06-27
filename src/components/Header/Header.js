@@ -14,7 +14,7 @@ import configimg from '../../assests/config.jpg'
 
 
 const Header = (props) => {
-    const { keycloackValue,logout} = useContext(KeycloackContext)
+    const { keycloackValue,logout,userInfo} = useContext(KeycloackContext)
     const navigate = useNavigate();
     const [loginUserRole, setLoginUserRole] = useState("");
 
@@ -31,7 +31,7 @@ const Header = (props) => {
         <div>
             <div className="heading_div">
                 <div>
-                    <img src={logoImg} alt="logo" className="logoimg " />
+                    <img src={ userInfo?.logo?userInfo?.logo: logoImg} alt="logo" className="logoimg " />
                 </div>
                 <div className="logout_main">
                     <div className="name-logout">

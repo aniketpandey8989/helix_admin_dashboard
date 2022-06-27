@@ -1,4 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react'
+import axios from 'axios'
 
 // KEYCLOACK
 import Keycloak from 'keycloak-js'
@@ -6,22 +7,37 @@ import Keycloak from 'keycloak-js'
 const KeycloackContext = createContext()
 
 const KeycloackContextProvider = (props) => {
-    const [ keycloackValue, setKeycloackValue ] = useState(null)
-    const [ authenticated, setAuthenticated ] = useState(false)
+    const [keycloackValue, setKeycloackValue] = useState(null)
+    const [authenticated, setAuthenticated] = useState(false)
+    const [userInfo,setUserInfo] = useState(null)
 
     const setKeycloack = () => {
         const keycloak = Keycloak("/keycloak.json")
 
         keycloak.init({
-            onLoad: 'login-required', 
-        }).then(authenticated => {
+            onLoad: 'login-required',
+        }).then( async authenticated => {
             setKeycloackValue(keycloak)
             setAuthenticated(authenticated)
-            
-               if (authenticated) 
-              {
+
+            if (authenticated) {
                 localStorage.setItem("accessToken", keycloak.token);
-              }
+
+                const accessToken = keycloak.token;
+               
+
+                const res = await axios.get(
+                    `${process.env.REACT_APP_HELIX_SERVER_URL}/user/info`,
+                    {
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${accessToken}`,
+                        },
+                    }
+                );
+                setUserInfo(res?.data)
+
+            }
 
         })
     }
@@ -29,7 +45,7 @@ const KeycloackContextProvider = (props) => {
     const logout = () => {
         setKeycloack(null)
         setAuthenticated(false)
-         localStorage.clear();
+        localStorage.clear();
         keycloackValue.logout()
     }
 
@@ -42,6 +58,7 @@ const KeycloackContextProvider = (props) => {
             value={{
                 keycloackValue,
                 authenticated,
+                userInfo,
                 logout
             }}
         >
