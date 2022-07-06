@@ -227,7 +227,7 @@ const Dashboard = () => {
           </div>
 
           {/* ---------------------------table-------------------- */}
-          <div className="table_content">
+          {/* <div className="table_content">
             <h5> All {addUserToGroup(loginUserRole)} List</h5>
           </div>
           <table className="table table-bordered">
@@ -313,11 +313,165 @@ const Dashboard = () => {
                 );
               })}
             </tbody>
-          </table>
-          <div className="pagi_div"></div>
+          </table> */}
+          {/* <div className="pagi_div"></div> */}
+                    {/* </div> */}
+
+                    {/* ---------------------------table-------------------- */}
+                    <div className="table_content">
+                        <h5> All {addUserToGroup(loginUserRole)} List</h5>
+                    </div>
+                    <table className="table table-bordered">
+                        <thead>
+                            <tr className="bg-heading">
+                                <th>
+                                    SNo.
+                                </th>
+                                <th>
+                                    Id
+                                </th>
+                                <th>
+                                    User Name
+                                </th>
+                                <th>
+                                    Email
+                                </th>
+
+                                <th>
+                                    Enabled
+                                </th>
+                                <th>
+                                    Created At
+                                </th>
+                                {
+                                    loginUserRole !== "Sub User" && (
+                                        <th>
+                                            Actions
+                                        </th>
+                                    )
+                                }
+                            </tr>
+                        </thead>
+                        <tbody className="table_body">
+
+                            {customerList?.map((dta, idx) => {
+
+                                return (
+
+                                    <tr key={idx} >
+
+                                        <th scope="row">
+                                            {idx + 1}
+                                        </th>
+                                        <td>
+                                            {dta?.id}
+                                        </td>
+                                        <td>
+                                            {dta?.username}
+                                        </td>
+                                        <td>
+                                            {dta?.email}
+                                        </td>
+
+                                        <td>
+                                            {dta?.enabled ? "true" : "false"}
+                                        </td>
+                                        <td>
+                                            {moment(dta?.createdTimestamp).format('L')}
+
+                                        </td>
+
+                                        {loginUserRole !== "Sub User" && (
+                                            <td>
+
+                                                <div>
+                                                    <img className={`arrowDown  ${dta?.id === showAction ? "active_rotate" : ""}`} src={require("../../assests/awrrowDown.png")}
+                                                        onClick={() => {
+                                                            setShowAction(prev => {
+                                                                if (prev !== dta?.id) {
+                                                                    return dta?.id
+                                                                }
+                                                                else {
+                                                                    return null
+                                                                }
+                                                            })
+                                                        }}
+
+
+
+                                                    />
+
+
+                                                    <div className={`unorder  ${dta?.id === showAction ? "active_tab" : ""}`} >
+
+
+
+                                                        <Dropdown isOpen={dta?.id === showAction ? true : false}>
+
+                                                            {loginUserRole === "Admin" && <DropdownMenu>
+
+                                                                <DropdownItem>
+                                                                    <span className='listItem' onClick={() => navigate(`/subcustomer/${dta?.id}`)}  >View</span>
+                                                                </DropdownItem>
+                                                                <DropdownItem>
+                                                                    <span className='listItem' onClick={() => {
+                                                                        onClickDelete(dta?.id)
+                                                                    }}  >Delete</span>
+                                                                </DropdownItem>
+                                                            </DropdownMenu>}
+                                                            {loginUserRole === "Customer" && (keycloackValue?.hasRealmRole("View Sub Customer") || keycloackValue?.hasRealmRole("Delete Sub Customer")) && <DropdownMenu>
+
+                                                                {keycloackValue?.hasRealmRole("View Sub Customer") && <DropdownItem>
+                                                                    <span className='listItem' onClick={() => navigate(`/subcustomer/${dta?.id}`)}  >View</span>
+                                                                </DropdownItem>}
+                                                                {keycloackValue?.hasRealmRole("Delete Sub Customer") && <DropdownItem>
+                                                                    <span className='listItem' onClick={() => {
+                                                                        onClickDelete(dta?.id)
+                                                                    }}  >Delete</span>
+                                                                </DropdownItem>}
+                                                            </DropdownMenu>}
+                                                            {loginUserRole === "Sub Customer" && (keycloackValue?.hasRealmRole("View User") || keycloackValue?.hasRealmRole("Delete User")) && <DropdownMenu>
+
+                                                                {keycloackValue?.hasRealmRole("View User") && <DropdownItem>
+                                                                    <span className='listItem' onClick={() => navigate(`/subcustomer/${dta?.id}`)}  >View</span>
+                                                                </DropdownItem>}
+                                                                {keycloackValue?.hasRealmRole("Delete User") && <DropdownItem>
+                                                                    <span className='listItem' onClick={() => {
+                                                                        onClickDelete(dta?.id)
+                                                                    }}  >Delete</span>
+                                                                </DropdownItem>}
+                                                            </DropdownMenu>}
+                                                            {loginUserRole === "User" && (keycloackValue?.hasRealmRole("View Sub User") || keycloackValue?.hasRealmRole("Delete Sub User")) &&<DropdownMenu>
+
+                                                                {keycloackValue?.hasRealmRole("View Sub User") && <DropdownItem>
+                                                                    <span className='listItem' onClick={() => navigate(`/subcustomer/${dta?.id}`)}  >View</span>
+                                                                </DropdownItem>}
+                                                                {keycloackValue?.hasRealmRole("Delete Sub User") && <DropdownItem>
+                                                                    <span className='listItem' onClick={() => {
+                                                                        onClickDelete(dta?.id)
+                                                                    }}  >Delete</span>
+                                                                </DropdownItem>}
+                                                            </DropdownMenu>}
+                                                        </Dropdown>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </td>
+                                        )}
+                                    </tr>
+                                )
+                            })}
+
+                        </tbody>
+                    </table>
+                    <div className="pagi_div"></div>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
+    //   </div>
+    // </div>
   );
 };
 
